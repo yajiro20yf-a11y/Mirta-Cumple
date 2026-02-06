@@ -44,20 +44,17 @@ body {
     50% { opacity: 0; }
 }
 
-/* Código grande */
+/* Texto grande */
 .code-big {
-    font-size: 32px;
-    color: #00ff88;
-    text-align: center;
-    margin: 30px 0;
+    font-size: 36px;
     font-weight: bold;
+    margin: 30px 0;
 }
 
 /* Poema */
 .poem {
     font-size: 22px;
     color: #ffd1dc;
-    text-align: center;
     line-height: 1.6;
     margin: 25px 0;
 }
@@ -65,7 +62,7 @@ body {
 /* Final */
 .final {
     font-size: 30px;
-    color: #ffffff;
+    color: white;
     margin: 25px 0;
 }
 </style>
@@ -77,42 +74,12 @@ body {
 
 <div id="terminal"></div><span class="cursor"></span>
 
-<div class="sunflowers">🌻 🌻 🌻 🌻 🌻</div>
+<div id="finalContent" style="display:none;">
 
-<script>
-const terminal = document.getElementById("terminal");
-
-function typeText(text, speed = 35) {
-    return new Promise(resolve => {
-        let i = 0;
-        const interval = setInterval(() => {
-            terminal.innerHTML += text.charAt(i);
-            i++;
-            if (i >= text.length) {
-                clearInterval(interval);
-                terminal.innerHTML += "\n";
-                resolve();
-            }
-        }, speed);
-    });
-}
-
-async function runScript() {
-
-    await typeText(">>> Ejecutando script.py");
-    await typeText(">>> import amor");
-    await typeText(">>> from mi_corazon import Mirta");
-    await typeText(">>> estado = 'amor verdadero'\n");
-
-    await typeText(">>> print('Mensaje principal:')\n");
-
-    await typeText(`
 <div class="code-big">
 >>> FELIZ CUMPLEAÑOS MIRTA <<<
 </div>
-`);
 
-    await typeText(`
 <div class="poem">
 Hoy no celebro solo tu cumpleaños,<br>
 celebro la paz que traes a mi vida.<br>
@@ -124,27 +91,55 @@ abrazos sinceros y calma,<br>
 y que nunca olvides<br>
 que alguien te ama con el corazón entero.
 </div>
-`);
 
-    await typeText(`
 <div class="final">
 ❤️ TE AMO ❤️
 </div>
-`);
 
-    await typeText(`
 <div class="final">
-      ♥♥♥♥♥       ♥♥♥♥♥
-    ♥♥♥♥♥♥♥♥   ♥♥♥♥♥♥♥♥
-  ♥♥♥♥♥♥♥♥♥♥ ♥♥♥♥♥♥♥♥♥♥
-  ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥
-    ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥
-      ♥♥♥♥♥♥♥♥♥♥♥♥
-        ♥♥♥♥♥♥♥♥
-          ♥♥♥♥
+      ♥♥♥♥♥       ♥♥♥♥♥<br>
+    ♥♥♥♥♥♥♥♥   ♥♥♥♥♥♥♥♥<br>
+  ♥♥♥♥♥♥♥♥♥♥ ♥♥♥♥♥♥♥♥♥♥<br>
+  ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥<br>
+    ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥<br>
+      ♥♥♥♥♥♥♥♥♥♥♥♥<br>
+        ♥♥♥♥♥♥♥♥<br>
+          ♥♥♥♥<br>
             ♥
 </div>
-`);
+
+</div>
+
+<div class="sunflowers">🌻 🌻 🌻 🌻 🌻</div>
+
+<script>
+const terminal = document.getElementById("terminal");
+const finalContent = document.getElementById("finalContent");
+
+function typeText(text, speed = 35) {
+    return new Promise(resolve => {
+        let i = 0;
+        const interval = setInterval(() => {
+            terminal.textContent += text.charAt(i);
+            i++;
+            if (i >= text.length) {
+                clearInterval(interval);
+                terminal.textContent += "\n";
+                resolve();
+            }
+        }, speed);
+    });
+}
+
+async function runScript() {
+    await typeText(">>> Ejecutando script.py");
+    await typeText(">>> import amor");
+    await typeText(">>> from mi_corazon import Mirta");
+    await typeText(">>> estado = 'amor verdadero'");
+    await typeText(">>> print('Mensaje listo')");
+
+    // Mostrar contenido final completo
+    finalContent.style.display = "block";
 }
 
 runScript();
