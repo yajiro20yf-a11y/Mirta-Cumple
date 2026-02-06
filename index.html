@@ -1,1 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>script.py</title>
+<style>
+body {
+    background-color: black;
+    color: #00ff88;
+    font-family: "Courier New", monospace;
+    padding: 20px;
+}
+#terminal {
+    white-space: pre-wrap;
+    font-size: 14px;
+}
+.cursor {
+    display: inline-block;
+    width: 10px;
+    background-color: #00ff88;
+    animation: blink 1s infinite;
+}
+@keyframes blink {
+    50% { opacity: 0; }
+}
+.expired {
+    color: #ff5555;
+}
+</style>
+</head>
+<body>
 
+<div id="terminal"></div><span class="cursor"></span>
+
+<script>
+const terminal = document.getElementById("terminal");
+
+const today = new Date();
+const targetDate = new Date(today.getFullYear(), 1, 9);
+
+function typeText(text, speed = 40) {
+    return new Promise(resolve => {
+        let i = 0;
+        const interval = setInterval(() => {
+            terminal.textContent += text.charAt(i);
+            i++;
+            if (i >= text.length) {
+                clearInterval(interval);
+                terminal.textContent += "\n";
+                resolve();
+            }
+        }, speed);
+    });
+}
+
+async function runScript() {
+    await typeText(">>> Ejecutando script.py");
+    await typeText(">>> import amor");
+    await typeText(">>> from mi_corazon import Mirta\n");
+
+    await typeText('>>> print("Feliz cumpleaños Mirta")');
+    await typeText('>>> print("Te amo ❤️")\n');
+
+    await typeText(`
+███████╗███████╗██╗     ██╗███████╗
+██╔════╝██╔════╝██║     ██║██╔════╝
+█████╗  █████╗  ██║     ██║█████╗  
+██╔══╝  ██╔══╝  ██║     ██║██╔══╝  
+██║     ███████╗███████╗██║███████╗
+╚═╝     ╚══════╝╚══════╝╚═╝╚══════╝
+
+🎂 FELIZ CUMPLEAÑOS MIRTA 🎂
+❤️ TE AMO ❤️
+`);
+}
+
+if (today.toDateString() === targetDate.toDateString()) {
+    runScript();
+} else if (today < targetDate) {
+    terminal.textContent =
+">>> El script aún no puede ejecutarse...\n>>> Fecha programada: 9 de febrero ❤️";
+} else {
+    terminal.textContent = ">>> Este script ya cumplió su misión ❤️";
+    terminal.classList.add("expired");
+}
+</script>
+
+</body>
+</html>
