@@ -23,9 +23,6 @@ body {
 @keyframes blink {
     50% { opacity: 0; }
 }
-.expired {
-    color: #ff5555;
-}
 </style>
 </head>
 <body>
@@ -34,9 +31,6 @@ body {
 
 <script>
 const terminal = document.getElementById("terminal");
-
-const today = new Date();
-const targetDate = new Date(today.getFullYear(), 1, 9);
 
 function typeText(text, speed = 40) {
     return new Promise(resolve => {
@@ -62,6 +56,14 @@ async function runScript() {
     await typeText('>>> print("Te amo ❤️")\n');
 
     await typeText(`
+  ♥♥♥       ♥♥♥
+ ♥   ♥     ♥   ♥
+ ♥     ♥ ♥     ♥
+  ♥             ♥
+    ♥         ♥
+      ♥     ♥
+        ♥♥♥
+
 ███████╗███████╗██╗     ██╗███████╗
 ██╔════╝██╔════╝██║     ██║██╔════╝
 █████╗  █████╗  ██║     ██║█████╗  
@@ -74,15 +76,7 @@ async function runScript() {
 `);
 }
 
-if (today.toDateString() === targetDate.toDateString()) {
-    runScript();
-} else if (today < targetDate) {
-    terminal.textContent =
-">>> El script aún no puede ejecutarse...\n>>> Fecha programada: 9 de febrero ❤️";
-} else {
-    terminal.textContent = ">>> Este script ya cumplió su misión ❤️";
-    terminal.classList.add("expired");
-}
+runScript();
 </script>
 
 </body>
