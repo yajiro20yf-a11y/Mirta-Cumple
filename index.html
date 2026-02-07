@@ -18,7 +18,6 @@
         overflow-x: hidden;
     }
 
-    /* --- Contenedor Principal --- */
     .container {
         width: 90%;
         max-width: 600px;
@@ -27,7 +26,7 @@
         z-index: 10;
     }
 
-    /* --- Ventana Terminal Moderna --- */
+    /* --- Terminal --- */
     .terminal-window {
         background: #1e1e1e;
         border-radius: 8px;
@@ -35,6 +34,7 @@
         border: 1px solid #333;
         overflow: hidden;
         margin-bottom: 20px;
+        transition: all 1s;
     }
 
     .terminal-header {
@@ -57,7 +57,6 @@
         text-align: left;
     }
 
-    /* Cursor parpadeante */
     .cursor::after {
         content: '▋';
         animation: blink 1s infinite;
@@ -65,8 +64,8 @@
     }
     @keyframes blink { 50% { opacity: 0; } }
 
-    /* --- Tarjeta de Amor (Oculta al inicio) --- */
-    #loveCard {
+    /* --- Contenidos (Ocultos por defecto) --- */
+    #birthdayCard, #waitCard {
         display: none;
         text-align: center;
         animation: fadeIn 2s ease-in-out;
@@ -74,10 +73,19 @@
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* --- Textos --- */
     .big-title {
         font-size: 2.5rem;
         color: #fff;
         text-shadow: 0 0 10px #ff0055;
+        margin: 20px 0;
+        font-weight: bold;
+    }
+    
+    .wait-title {
+        font-size: 2rem;
+        color: #fff;
+        text-shadow: 0 0 10px #00aaff;
         margin: 20px 0;
         font-weight: bold;
     }
@@ -91,6 +99,16 @@
         line-height: 1.8;
         font-size: 1.1rem;
         box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+    
+    .wait-box {
+        background: rgba(0, 200, 255, 0.05);
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid rgba(0, 200, 255, 0.1);
+        color: #b3e5fc;
+        line-height: 1.8;
+        font-size: 1.1rem;
     }
 
     .final-heart {
@@ -108,7 +126,7 @@
         60% { transform: scale(1); }
     }
 
-    /* --- El Fantasmita (SVG Animado) --- */
+    /* --- Fantasmita SVG --- */
     .ghost-container {
         width: 150px;
         height: 150px;
@@ -122,7 +140,10 @@
         100% { transform: translateY(0px); }
     }
 
-    /* --- Lluvia de fondo --- */
+    /* Ocultar la flor en el modo espera */
+    .hidden-flower { display: none; }
+
+    /* --- Lluvia --- */
     .rain-container {
         position: fixed;
         top: 0; left: 0;
@@ -158,7 +179,38 @@
         </div>
     </div>
 
-    <div id="loveCard">
+    <div id="waitCard">
+        <div class="ghost-container">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40,100 Q40,20 100,20 Q160,20 160,100 Q160,180 130,170 Q115,160 100,180 Q85,160 70,170 Q40,180 40,100" fill="#ffffff" stroke="#ddd" stroke-width="2"/>
+                <circle cx="75" cy="80" r="8" fill="#333"/>
+                <circle cx="125" cy="80" r="8" fill="#333"/>
+                <circle cx="65" cy="95" r="6" fill="#ffb6c1" opacity="0.6"/>
+                <circle cx="135" cy="95" r="6" fill="#ffb6c1" opacity="0.6"/>
+                <circle cx="100" cy="100" r="5" fill="#333"/> 
+                <circle cx="80" cy="110" r="12" fill="#ffffff"/>
+                <circle cx="120" cy="110" r="12" fill="#ffffff"/>
+            </svg>
+        </div>
+
+        <div class="wait-title">
+            ¡SHHH! 🤫<br>NO ES HORA
+        </div>
+
+        <div class="wait-box">
+            <p>
+                Mirta, no seas impaciente... 🤭<br>
+                Estoy preparando algo muy especial para ti,<br>
+                pero tienes que esperar hasta el <b>9 de Febrero</b>.
+            </p>
+            <p>
+                Prometo que valdrá la pena.<br>
+                ¡Vuelve en tu cumpleaños! 👻❤️
+            </p>
+        </div>
+    </div>
+
+    <div id="birthdayCard">
         
         <div class="ghost-container">
             <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
@@ -207,12 +259,30 @@
 
 <script>
 const terminalText = document.getElementById("terminalText");
-const loveCard = document.getElementById("loveCard");
+const birthdayCard = document.getElementById("birthdayCard");
+const waitCard = document.getElementById("waitCard");
 const terminalWindow = document.getElementById("terminalWindow");
 const rainContainer = document.getElementById("rainContainer");
 
-// Función de escritura tipo máquina
-function typeText(text, delay = 50) {
+// --- CONFIGURACIÓN DE FECHA ---
+// El mes en JS empieza en 0 (Enero=0, Febrero=1)
+const TARGET_MONTH = 1; // Febrero
+const TARGET_DAY = 9;   // Día 9
+
+function checkDate() {
+    const today = new Date();
+    const month = today.getMonth();
+    const day = today.getDate();
+
+    // Si estamos en Febrero y es día 9 o más (o si ya pasamos febrero)
+    if ((month === TARGET_MONTH && day >= TARGET_DAY) || month > TARGET_MONTH) {
+        return true; // Es el cumpleaños
+    } else {
+        return false; // Aún no es
+    }
+}
+
+function typeText(text, delay = 40) {
     return new Promise(resolve => {
         let i = 0;
         function type() {
@@ -223,7 +293,7 @@ function typeText(text, delay = 50) {
                     terminalText.innerHTML += text.charAt(i);
                 }
                 i++;
-                setTimeout(type, delay + (Math.random() * 20)); // Velocidad variable para realismo
+                setTimeout(type, delay + (Math.random() * 20));
             } else {
                 terminalText.innerHTML += '<br>';
                 resolve();
@@ -233,7 +303,6 @@ function typeText(text, delay = 50) {
     });
 }
 
-// Lluvia de emojis
 function startRain() {
     const emojis = ['🌻', '❤️', '✨', '🎂'];
     setInterval(() => {
@@ -244,35 +313,45 @@ function startRain() {
         el.style.fontSize = (Math.random() * 20 + 20) + 'px';
         el.style.animationDuration = (Math.random() * 3 + 2) + 's';
         rainContainer.appendChild(el);
-
-        // Limpiar elementos viejos
         setTimeout(() => el.remove(), 5000);
     }, 300);
 }
 
-// Secuencia principal
 async function runScript() {
-    await typeText("user@heart:~$ python3 birthday_script.py", 40);
-    await new Promise(r => setTimeout(r, 500));
-    await typeText(">>> Cargando librerías de amor... [OK]", 20);
-    await typeText(">>> Analizando sentimientos... [100%]", 20);
-    await typeText(">>> Buscando a la persona favorita... Encontrada: MIRTA", 30);
-    await typeText(">>> Ejecutando sorpresa...", 40);
+    const isBirthday = checkDate();
+
+    await typeText("user@heart:~$ python3 sistema_amor.py");
+    await new Promise(r => setTimeout(r, 400));
+    await typeText(">>> Verificando fecha actual...", 30);
     
-    await new Promise(r => setTimeout(r, 800));
-    
-    // Efecto de minimizar terminal y mostrar carta
-    terminalWindow.style.transition = "all 1s";
-    terminalWindow.style.transform = "scale(0.9)";
-    terminalWindow.style.opacity = "0.5";
-    
-    loveCard.style.display = "block";
-    
-    // Iniciar lluvia de flores y corazones
-    startRain();
+    if (isBirthday) {
+        // --- SECUENCIA DE CUMPLEAÑOS (9 FEB) ---
+        await typeText(">>> FECHA CONFIRMADA: 9 DE FEBRERO ✨", 30);
+        await typeText(">>> Cargando sorpresa para Mirta... [100%]", 30);
+        await typeText(">>> Ejecutando programa 'Amor Infinito'...", 40);
+        
+        await new Promise(r => setTimeout(r, 800));
+        
+        terminalWindow.style.transform = "scale(0.9)";
+        terminalWindow.style.opacity = "0.5";
+        birthdayCard.style.display = "block";
+        startRain();
+
+    } else {
+        // --- SECUENCIA DE ESPERA (ANTES DEL 9 FEB) ---
+        await new Promise(r => setTimeout(r, 500));
+        await typeText(">>> ERROR: Aún es temprano.", 40);
+        await typeText(">>> Falta poco para el día especial...", 40);
+        await typeText(">>> Bloqueando sorpresa por seguridad 🔒", 40);
+        
+        await new Promise(r => setTimeout(r, 800));
+        
+        terminalWindow.style.transform = "scale(0.9)";
+        terminalWindow.style.opacity = "0.8";
+        waitCard.style.display = "block";
+    }
 }
 
-// Iniciar al cargar (o con clic si el navegador bloquea audio/video, aunque aquí no hay)
 window.onload = runScript;
 
 </script>
